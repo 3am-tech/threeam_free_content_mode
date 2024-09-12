@@ -1,9 +1,9 @@
 {
     "name": "threeam/threeam-free-content-mode",
     "type": "typo3-cms-extension",
-    "description": "Adds a custom context menu option to the page tree.",
+    "description": "Adds a custom context menu option to make a page content mode FREE.",
     "license": "GPL-2.0-or-later",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "authors": [
         {
             "name": "Mohsin Khan",
