@@ -3,3 +3,7 @@ services:
     autowire: true
     autoconfigure: true
     public: false
+
+  Threeam\ThreeamFreeContentMode\ContextMenu\FreeContentModeItemProvider:
+    tags:
+      - name: backend.contextmenu.itemprovider

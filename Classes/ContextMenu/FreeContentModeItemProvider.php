@@ -2,6 +2,9 @@
 
 namespace Threeam\ThreeamFreeContentMode\ContextMenu;
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+
 /**
  * This file is part of the TYPO3 CMS project.
  *
@@ -18,7 +21,7 @@ namespace Threeam\ThreeamFreeContentMode\ContextMenu;
 use TYPO3\CMS\Backend\ContextMenu\ItemProviders\AbstractProvider;
 
 /**
- * Item provider adding Hello World item
+ * Item provider adding Free Mode item
  */
 class FreeContentModeItemProvider extends AbstractProvider
 {
@@ -27,11 +30,11 @@ class FreeContentModeItemProvider extends AbstractProvider
      * @var array
      */
     protected $itemsConfiguration = [
-        'hello' => [
+        'free_content_mode' => [
             'type' => 'item',
-            'label' => 'Hello World', // you can use "LLL:" syntax here
-            'iconIdentifier' => 'actions-lightbulb-on',
-            'callbackAction' => 'helloWorld', //name of the function in the JS file
+            'label' => 'Free Mode', // you can use "LLL:" syntax here
+            'iconIdentifier' => 'actions-unlink',
+            'callbackAction' => 'setPageContentModeToFree', //name of the function in the JS file
         ],
     ];
 
@@ -42,10 +45,7 @@ class FreeContentModeItemProvider extends AbstractProvider
      */
     public function canHandle(): bool
     {
-        // Current table is: $this->table
-        // Current UID is: $this->identifier
-//        return $this->table === 'pages';
-        return true;
+        return $this->table === 'pages';
     }
 
     /**
@@ -75,8 +75,7 @@ class FreeContentModeItemProvider extends AbstractProvider
     protected function getAdditionalAttributes(string $itemName): array
     {
         return [
-            'data-callback-module' => '@t3docs/examples/context-menu-actions',
-            // Here you can also add any other useful "data-" attribute you'd like to use in your JavaScript (e.g. localized messages)
+            'data-callback-module' => '@threeam/threeamfreecontentmode/context-menu-actions',
         ];
     }
 
@@ -95,7 +94,7 @@ class FreeContentModeItemProvider extends AbstractProvider
         $localItems = $this->prepareItems($this->itemsConfiguration);
 
         if (isset($items['info'])) {
-            //finds a position of the item after which 'hello' item should be added
+            //finds a position of the item after which item should be added
             $position = array_search('info', array_keys($items), true);
 
             //slices array into two parts
@@ -126,8 +125,8 @@ class FreeContentModeItemProvider extends AbstractProvider
         }
         $canRender = false;
         switch ($itemName) {
-            case 'hello':
-                $canRender = $this->canSayHello();
+            case 'free_content_mode':
+                $canRender = $this->canRenderFreeModeItem();
                 break;
         }
         return $canRender;
@@ -138,9 +137,55 @@ class FreeContentModeItemProvider extends AbstractProvider
      *
      * @return bool
      */
-    protected function canSayHello(): bool
+    protected function canRenderFreeModeItem(): bool
     {
-        //usually here you can find more sophisticated condition. See e.g. PageProvider::canBeEdited()
-        return true;
+        $uid = $this->identifier;
+
+        // Get the QueryBuilder for the 'pages' table to retrieve the page data
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('pages');
+
+        // Remove restrictions such as deleted, hidden, etc.
+        $queryBuilder->getRestrictions()->removeAll();
+
+        // Fetch the pid and sys_language_uid for the given uid
+        $pageData = $queryBuilder
+            ->select('l10n_parent', 'sys_language_uid')
+            ->from('pages')
+            ->where(
+                $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid, \PDO::PARAM_INT))
+            )
+            ->execute()
+            ->fetch();
+
+        if (!$pageData) {
+            return (new JsonResponse())->setPayload([
+                'status' => 'error',
+                'message' => 'Page not found'
+            ]);
+        }
+
+        $l10nParent = (int)$pageData['l10n_parent'];
+        $sysLanguageUid = (int)$pageData['sys_language_uid'];
+
+        // Get the QueryBuilder for the 'tt_content' table
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tt_content');
+
+        // Remove restrictions such as deleted, hidden, etc. from the tt_content query
+        $queryBuilder->getRestrictions()->removeAll();
+
+        $recordsCount = $queryBuilder
+            ->select('uid')
+            ->from('tt_content')
+            ->where(
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($l10nParent, \PDO::PARAM_INT)),
+                $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter($sysLanguageUid, \PDO::PARAM_INT)),
+                $queryBuilder->expr()->neq('l18n_parent', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT))
+            )
+            ->execute()
+            ->rowCount();
+
+        return $recordsCount > 0 ? true : false;
     }
 }
