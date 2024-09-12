@@ -31,4 +31,4 @@ After installation:
 1. Right-click any page in the TYPO3 page tree.
 2. In the context menu, you will see a new action titled "Free Mode."
 3. Clicking on this action will automatically switch the page to Free Mode, allowing you to use the Container extension and other features that require do not work in mixed mode.
-
+<img width="490" alt="image" src="https://github.com/user-attachments/assets/636d3a21-ce06-4a05-b631-56676195af8f">
