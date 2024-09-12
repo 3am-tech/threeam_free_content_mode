@@ -1,0 +1,8 @@
+// Add a new item to the page context menu
+options.contextMenu.pageTree.items.1500 = ITEM
+options.contextMenu.pageTree.items.1500 {
+    name = my_custom_action
+    label = LLL:EXT:threeam_free_content_mode/Resources/Private/Language/locallang.xlf:contextmenu.custom_action
+    iconIdentifier = actions-document
+    callbackAction = myCustomAction
+}

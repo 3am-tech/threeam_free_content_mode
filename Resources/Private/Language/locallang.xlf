@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2024-08-27T12:00:00Z" product-name="threeam_free_content_mode">
+        <header/>
+        <body>
+            <trans-unit id="contextmenu.custom_action">
+                <source>My Custom Action</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
