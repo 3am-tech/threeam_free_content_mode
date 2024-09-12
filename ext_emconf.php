@@ -6,12 +6,12 @@ $EM_CONF[$_EXTKEY] = [
     'category' => 'plugin',
     'author' => 'Mohsin Khan',
     'author_email' => 'mohsin@3am-tech.com',
-    'state' => 'beta',
+    'state' => 'stable',
     'clearCacheOnLoad' => 0,
-    'version' => '0.0.1',
+    'version' => '1.0.0',
     'constraints' => [
         'depends' => [
-            'typo3' => '12.4.0-13.5.99',
+            'typo3' => '12.4.0-12.9.99',
         ],
         'conflicts' => [],
         'suggests' => [],
