@@ -1,4 +1,4 @@
-# ThreeAM Free Content Mode
+# [ThreeAM] Free Content Mode
 
 ## Description
 
