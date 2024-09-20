@@ -1,7 +1,7 @@
 <?php
 
 $EM_CONF[$_EXTKEY] = [
-    'title' => 'ThreeAM Free Content Mode',
+    'title' => '[ThreeAM] Free Content Mode',
     'description' => 'Adds a custom context menu option to make a page content mode FREE.',
     'category' => 'plugin',
     'author' => 'Mohsin Khan',
